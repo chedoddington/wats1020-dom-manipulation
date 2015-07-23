@@ -16,32 +16,47 @@ $( document ).ready(function() {
     // Place all your Javascript code inside this "document ready" function so
     // it does not run until the DOM is ready for Javascript manipulation.
 
-    // TODO: Create a function to listen for clicks on the "login" button.
-    //      1. When a user clicks the "login" button, hide the login
-    //          form elements on the page.
-    //      2. Fill the user's first and last name into `div.user-info`.
-    //      (NOTE: You do not have to perform any validation on the data as
-    //          a base requirement.)
+    // Handle clicking on the login form
+	$("#login-form .btn").click(function() {
+		// hide the login button
+		$("#login-form").hide();
+		// replace "First Last" with the data in userInfo
+		$("span.user-fullname").text(userInfo.firstName + " " + userInfo.lastName);
+		// Show the previously hidden data
+		$("div.user-info").show();
+	});
 
 
-    // TODO: Create a function to listen for clicks on all the "View Details"
-    // buttons so that when a user clicks a "View Details" button they see
-    // the content contained in the elements with the class "details" in the
-    // proper part of the screen.
-    //      1. When user clicks a "view details" button, find the parent of that element.
-    //      2. Within that parent, find all the elements that have the class `details`.
-    //      3. Toggle visibility of all the elements within that parent with the class `details`.
-    //      4. Change the text of the "view details" button to read "hide details" so the user
-    //          understands they can hide the text again.
+    // Select all elements with "view-details" class
+	$(".view-details").click(function() {
+		// Select the parent of the parent (every view-details is wrapped in a <p> before it gets to the
+		// parent div we want) and then select the children whose class equals "details"
+		// and toggle each of their visibilites
+		$(this).parent().parent().children(".details").toggle();
+		// Change the text of the button to "Hide Details"
+		$(this).text("Hide Details");
+	});
 
-    // TODO: Create a function that listens for clicks on the voting buttons and
-    // looks at the `data-vote` attribute on each button to see what was voted for,
-    // then determines the updated vote breakdown to adjust the progress bars.
-    //      1. Set up an event listener on the buttons with the `vote` class.
-    //      2. When a button is clicked, look at the `data-vote` attribute to determine
-    //          what the user is voting for ("great" or "greatest").
-    //      3. Increment the counter for whichever vote talley is affected.
-    //      4. Determine the respective percentages (out of 100) for each progress bar.
-    //      5. Modify the `width` attribute on each progress bar to set the updated percentage.
+	$(".vote").click(function() {
+		// Get the "data-vote" attribute
+		var voteType = $(this).attr("data-vote");
+		// If it's of type "great", increment the great cound
+		if (voteType == "great") {
+			voteCounts.great += 1;
+		// Otherwise it must be of type greates, increment greatest count
+		} else {
+			voteCounts.greatest += 1;
+		}
+		// always increment the total votes count every time the button is clicked
+		voteCounts.total += 1;
+		
+		// Calculate the percentage of page width for both the great and greatest bars
+		var greatPercent = 100 * (voteCounts.great / voteCounts.total);
+		var greatestPercent = 100 * (voteCounts.greatest / voteCounts.total);
+		
+		// Update the bar's style attribute to reflect the new percentage
+		$(".great-progress").attr("style", "width: " + greatPercent + "%");
+		$(".greatest-progress").attr("style", "width: " + greatestPercent + "%");
+	});
 
 });
